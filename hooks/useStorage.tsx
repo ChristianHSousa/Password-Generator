@@ -40,11 +40,11 @@ const useStorage = () => {
         }
     }
 
-    return(
-        //getItem,
-        saveItem
-        //removeItem
-    )
+    return {
+        getItem,
+        saveItem,
+        removeItem
+    }
 }
 
 export default useStorage;
