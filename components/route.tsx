@@ -1,24 +1,26 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Home } from '../pages/Home'
 import { Password } from '../pages/Passwords'
-import { Ionicons} from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 const Tab = createBottomTabNavigator();
 
 export function Routes() {
     return (
-        <Tab.Navigator screenOptions={{ tabBarStyle: { height: "6%" }}} >
+
+        <Tab.Navigator screenOptions={{ tabBarStyle: { height: "6%" }, tabBarHideOnKeyboard: true }} >
+
             <Tab.Screen
             
                 name="home"
                 component={Home}
                 options={{
-                    tabBarShowLabel:false,
-                    headerShown:false,
-                    tabBarIcon:({focused,size,color}) => {
-                        if(focused){
-                            return <Ionicons size={size} color={color} name='home'/>
+                    tabBarShowLabel: false,
+                    headerShown: false,
+                    tabBarIcon: ({ focused, size, color }) => {
+                        if (focused) {
+                            return <Ionicons size={size} color={color} name='home' />
                         }
-                        return <Ionicons size={size} color={color} name='home-outline'/>
+                        return <Ionicons size={size} color={color} name='home-outline' />
                     }
                 }} />
 
@@ -26,16 +28,16 @@ export function Routes() {
                 name="passwords"
                 component={Password}
                 options={{
-                    tabBarShowLabel:false,
-                    headerShown:false,
-                    tabBarIcon:({focused,size,color}) => {
-                        if(focused){
-                            return <Ionicons size={size} color={color} name='lock-closed'/>
+                    tabBarShowLabel: false,
+                    headerShown: false,
+                    tabBarIcon: ({ focused, size, color }) => {
+                        if (focused) {
+                            return <Ionicons size={size} color={color} name='lock-closed' />
                         }
-                        return <Ionicons size={size} color={color} name='lock-closed-outline'/>
+                        return <Ionicons size={size} color={color} name='lock-closed-outline' />
                     }
                 }} />
 
-        </Tab.Navigator>
+        </Tab.Navigator >
     )
 }

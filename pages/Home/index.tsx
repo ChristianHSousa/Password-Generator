@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from "react-native"
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, KeyboardAvoidingView, TextInput, } from "react-native"
 import Slider from '@react-native-community/slider'
 import { ModalPassword } from '../../components/modal'
+import { CategoryModalPanel } from "@/components/modal/Category"
 
 export function Home() {
 
@@ -10,6 +11,7 @@ export function Home() {
     const [size, setSize] = useState(10);
     const [passwordValue, setPasswordValue] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
+    const [categoryModal, setCategoryModalVisible] = useState(false);
     function generatePassword() {
 
         let password = "";
@@ -19,14 +21,20 @@ export function Home() {
         setPasswordValue(password);
         setModalVisible(true);
     }
+
+    function CallCategoryModal() {
+        setCategoryModalVisible(true);
+    }
+
     return (
+
+
         <View style={styles.container}>
             <Image
                 source={require('@/assets/images/logo.png')}
                 style={styles.logo}
             />
             <Text style={styles.title}>{size} caracteres</Text>
-
             <View style={styles.area}>
                 <Slider
                     style={{ height: 50 }}
@@ -46,8 +54,16 @@ export function Home() {
                 <Text style={styles.buttonText}>Gerar Senha</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity style={styles.button} onPress={CallCategoryModal}>
+                <Text style={styles.buttonText}>Gerar Nova Senha</Text>
+            </TouchableOpacity>
+
             <Modal visible={modalVisible} animationType="fade" transparent={true}>
                 <ModalPassword password={passwordValue} handleClose={() => setModalVisible(false)} />
+            </Modal>
+
+            <Modal visible={categoryModal} animationType="fade" transparent={true}>
+                <CategoryModalPanel handleClose={() => setCategoryModalVisible(false)} />
             </Modal>
         </View>
     )
@@ -57,11 +73,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#F3F3FF",
-        justifyContent: "center",
+        //justifyContent: "center",
         alignItems: "center"
     },
     logo: {
-        marginBottom: 60
+        marginTop: "10%",
+        marginBottom: "30%"
     },
     area: {
         marginTop: 14,

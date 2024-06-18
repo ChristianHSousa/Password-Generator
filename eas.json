@@ -1,0 +1,33 @@
+{
+    "cli": {
+        "version": ">= 0.47.0",
+        "promptToConfigurePushNotifications": false
+    },
+    "build": {
+        "development": {
+            "developmentClient": true,
+            "distribution": "internal",
+            "credentialsSource": "local"
+        },
+        "production": {
+            "ios": {
+                "resourceClass": "m-medium"
+            },
+            "android": {}
+        }
+    },
+    "submit": {
+        "production": {},
+        "test": {
+            "android": {
+                "track": "alpha"
+            },
+            "ios": {
+                "ascAppId": "123",
+                "appleTeamId": "123",
+                "sku": "sku",
+                "bundleIdentifier": "com.test.test"
+            }
+        }
+    }
+}
