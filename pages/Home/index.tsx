@@ -54,8 +54,8 @@ export function Home() {
                 <Text style={styles.buttonText}>Gerar Senha</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={CallCategoryModal}>
-                <Text style={styles.buttonText}>Gerar Nova Senha</Text>
+            <TouchableOpacity style={[styles.button, styles.buttonCategory]} onPress={CallCategoryModal}>
+                <Text style={styles.buttonText}>Gerenciar categorias</Text>
             </TouchableOpacity>
 
             <Modal visible={modalVisible} animationType="fade" transparent={true}>
@@ -96,6 +96,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 8,
         marginBottom: 18
+    },
+    buttonCategory:{
+        backgroundColor:"#FFA500"
     },
     buttonText: {
         color: "#FFF",

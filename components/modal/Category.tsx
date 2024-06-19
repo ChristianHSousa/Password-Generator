@@ -1,17 +1,29 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Modal, KeyboardAvoidingView, Platform } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { View, TouchableOpacity, StyleSheet, Text, Modal, KeyboardAvoidingView, Platform, FlatList, Pressable } from 'react-native'
 import { NewCategoryModal } from './NewCategory';
 import { useIsFocused } from "@react-navigation/native";
-import useStorage from "@/hooks/useStorage";
+import { useCategoryDatabase, CategoryDatabaseType } from '@/database/useCategoryDatabase';
+import { CategoryItem } from '@/pages/CategoryItem/CategoryItem';
 export function CategoryModalPanel({ handleClose }: any) {
-    const { getItem, saveItem, removeItem } = useStorage();
-    const [listCategories, setListCategories] = useState([]);
+    const [listCategories, setListCategories] = useState<CategoryDatabaseType[]>([]);
     const [newCategoryCall, setVisibleNewCategory] = useState(false);
-    const foused = useIsFocused;
+    const CategoryDatabase = useCategoryDatabase();
+    const focused = useIsFocused;
+
     function callNewCategory() {
         setVisibleNewCategory(true);
     }
+
+    useEffect(() => {
+        async function loadCategories() {
+            setListCategories([]);
+            const categories = await CategoryDatabase.getAllName();
+            setListCategories(categories);
+        }
+        loadCategories();
+    }, [focused, newCategoryCall])
+
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} enabled={false}>
 
@@ -19,9 +31,14 @@ export function CategoryModalPanel({ handleClose }: any) {
                 <View style={styles.content}>
                     <Text style={styles.titulo}>Categorias</Text>
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={[styles.button, styles.buttonAdd]} onPress={callNewCategory}>
-                            <Ionicons name="add" color={"white"} size={100}></Ionicons>
-                        </TouchableOpacity>
+                        <View style={styles.add}>
+                            <Pressable style={styles.icon} onPress={callNewCategory}><Ionicons size={40} color={"white"} name='add' /></Pressable>
+                        </View>
+                        <FlatList
+                            style={{ paddingTop: 14 }}
+                            data={listCategories}
+                            renderItem={({ item }) => <CategoryItem data={item.name} />}
+                        />
                     </View>
 
                     <TouchableOpacity style={styles.buttonVoltar} onPress={handleClose}>
@@ -84,9 +101,19 @@ const styles = StyleSheet.create({
         color: "#FFF",
         fontSize: 20
     },
-    titulo: {
+    titulo: {   
         fontSize: 25,
         fontWeight: "bold",
         padding: "5%"
+    }, add: {
+        backgroundColor: "#392de9",
+        marginTop: 10,
+        width: "95%",
+        alignSelf: 'center',
+        borderRadius: 8
+    },
+    icon:{
+        width:'100%',
+        alignItems:'center',
     }
 })

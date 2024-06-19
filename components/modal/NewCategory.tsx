@@ -2,25 +2,14 @@ import * as React from 'react';
 import { View, StyleSheet, Text, Pressable, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { useCategoryDatabase } from '@/database/useCategoryDatabase';
 export function NewCategoryModal({ handleClose }: any) {
-    const [text, onChangeText] = React.useState('');
     const [name, onChangeName] = React.useState('');
 
     const CategoryDatabase = useCategoryDatabase();
 
-
-    async function searchByName() {
-        try {
-            const response = await CategoryDatabase.searchByName(text)
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     async function create() {
         try {
-            const response = await CategoryDatabase.create({ name: String })
-            console.log(response);
+            const response = await CategoryDatabase.create({ name })
+            onChangeName('');
         } catch (error) {
             console.log(error);
         }
@@ -41,7 +30,7 @@ export function NewCategoryModal({ handleClose }: any) {
                         />
                     </View>
                     <View style={styles.containerButtom}>
-                        <Pressable onPress={searchByName} style={styles.button}>
+                        <Pressable onPress={handleClose} style={styles.button}>
                             <Text>Cancelar</Text>
                         </Pressable>
                         <TouchableOpacity style={[styles.button, styles.buttonSalvar]} onPress={create}>
