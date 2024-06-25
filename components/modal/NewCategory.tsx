@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { View, StyleSheet, Text, Pressable, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { useCategoryDatabase } from '@/database/useCategoryDatabase';
-export function NewCategoryModal({ handleClose }: any) {
-    const [name, onChangeName] = React.useState('');
-
+export function NewCategoryModal({title, data, handleClose }: any) {
+    const [name, onChangeName] = React.useState(data);
     const CategoryDatabase = useCategoryDatabase();
 
     async function create() {
@@ -14,11 +13,20 @@ export function NewCategoryModal({ handleClose }: any) {
             console.log(error);
         }
     }
+    async function action() {
+        if (title == "Editar categoria"){
+            const response = await CategoryDatabase.updateByName(data,name);
+            handleClose();
+        } else {
+            create();
+        }
+    }
+
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} enabled={false}>
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Text style={styles.titulo}>Nova categoria</Text>
+                    <Text style={styles.titulo}>{title}</Text>
                     <View style={styles.TextView}>
                         <TextInput
                             style={styles.textField}
@@ -30,11 +38,11 @@ export function NewCategoryModal({ handleClose }: any) {
                         />
                     </View>
                     <View style={styles.containerButtom}>
-                        <Pressable onPress={handleClose} style={styles.button}>
-                            <Text>Cancelar</Text>
+                        <Pressable onPress={handleClose} style={[styles.button,styles.buttonVoltar]}>
+                            <Text style={styles.Text}>Cancelar</Text>
                         </Pressable>
-                        <TouchableOpacity style={[styles.button, styles.buttonSalvar]} onPress={create}>
-                            <Text style={styles.SaveText}>Salvar</Text>
+                        <TouchableOpacity style={[styles.button, styles.buttonSalvar]} onPress={action}>
+                            <Text style={[styles.SaveText,styles.Text]}>Salvar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -71,7 +79,7 @@ const styles = StyleSheet.create({
     },
     containerButtom: {
         width: '90%',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         flexDirection: 'row',
         alignItems: 'center'
     },
@@ -79,12 +87,17 @@ const styles = StyleSheet.create({
         backgroundColor: "#392de9",
     },
     button: {
-        flex: 1,
+        width:"40%",
+        borderRadius: 8,
+        justifyContent: "center",
         alignItems: "center",
-        marginTop: 5,
-        marginBottom: 5,
-        padding: 8,
-        borderRadius: 8
+        textAlign:"center",
+        marginTop: 8,
+        padding:8,
+        marginBottom: 8,
+    },
+    Text:{
+        fontWeight:'bold'
     },
     SaveText: {
         color: "#FFF",
@@ -93,5 +106,9 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: "bold",
         padding: "1%"
-    }
+    },
+    buttonVoltar: {
+        backgroundColor: "rgba(219, 208, 210, 0.1)",
+        borderWidth:1,
+    },
 })

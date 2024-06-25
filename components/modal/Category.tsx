@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Modal, KeyboardAvoidingView, Platform, FlatList, Pressable } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Text, Modal, KeyboardAvoidingView, FlatList, Pressable } from 'react-native'
 import { NewCategoryModal } from './NewCategory';
 import { useIsFocused } from "@react-navigation/native";
 import { useCategoryDatabase, CategoryDatabaseType } from '@/database/useCategoryDatabase';
 import { CategoryItem } from '@/pages/CategoryItem/CategoryItem';
+
 export function CategoryModalPanel({ handleClose }: any) {
     const [listCategories, setListCategories] = useState<CategoryDatabaseType[]>([]);
     const [newCategoryCall, setVisibleNewCategory] = useState(false);
@@ -14,11 +15,26 @@ export function CategoryModalPanel({ handleClose }: any) {
     function callNewCategory() {
         setVisibleNewCategory(true);
     }
-
+    async function refresh() {
+        const categories = await CategoryDatabase.getAllName();
+        
+        if (categories.length === listCategories.length) {
+            for (let v = 0; v < categories.length; v++) {
+                if (categories[v].name != listCategories[v].name) {
+                    setListCategories([]);
+                    console.log("Entrou")
+                    setListCategories(categories);
+                    break
+                }
+            }
+        }else{
+            setListCategories(categories);
+        }
+    }
     useEffect(() => {
         async function loadCategories() {
-            setListCategories([]);
             const categories = await CategoryDatabase.getAllName();
+
             setListCategories(categories);
         }
         loadCategories();
@@ -31,22 +47,25 @@ export function CategoryModalPanel({ handleClose }: any) {
                 <View style={styles.content}>
                     <Text style={styles.titulo}>Categorias</Text>
                     <View style={styles.buttonContainer}>
-                        <View style={styles.add}>
-                            <Pressable style={styles.icon} onPress={callNewCategory}><Ionicons size={40} color={"white"} name='add' /></Pressable>
-                        </View>
+
                         <FlatList
                             style={{ paddingTop: 14 }}
                             data={listCategories}
-                            renderItem={({ item }) => <CategoryItem data={item.name} />}
+                            renderItem={({ item }) => <CategoryItem data={item.name} estado={() => refresh()}
+                            />
+                            }
                         />
                     </View>
 
-                    <TouchableOpacity style={styles.buttonVoltar} onPress={handleClose}>
-                        <Text style={styles.buttonVoltarText}>Voltar</Text>
-                    </TouchableOpacity>
+                    <View style={styles.footer}>
+                        <TouchableOpacity style={[styles.button, styles.buttonVoltar]} onPress={handleClose}>
+                            <Text style={styles.buttonVoltarText}>Voltar</Text>
+                        </TouchableOpacity>
+                        <Pressable style={[styles.button, styles.buttonAdd]} onPress={callNewCategory}><Ionicons size={40} color={"white"} name='add' /></Pressable>
+                    </View>
                 </View>
                 <Modal visible={newCategoryCall} animationType='fade' transparent={true}>
-                    <NewCategoryModal handleClose={() => setVisibleNewCategory(false)} />
+                    <NewCategoryModal title={"Nova Categoria"} handleClose={() => setVisibleNewCategory(false)} />
                 </Modal>
             </View>
         </KeyboardAvoidingView>
@@ -69,16 +88,16 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     buttonAdd: {
-        backgroundColor: "#C6C6C6",
-        opacity: 0.5,
+        backgroundColor: "#392de9",
     },
     button: {
-        height: 120,
-        width: 120,
+        width: "40%",
         borderRadius: 8,
         justifyContent: "center",
         alignItems: "center",
-        margin: 15
+        textAlign: "center",
+        marginTop: 8,
+        marginBottom: 8,
     },
     buttonContainer: {
         width: "100%",
@@ -89,31 +108,22 @@ const styles = StyleSheet.create({
         borderTopWidth: 1
     },
     buttonVoltar: {
-        backgroundColor: "#392de9",
-        width: "70%",
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 8,
-        margin: "auto"
+        backgroundColor: "rgba(219, 208, 210, 0.1)",
+        borderWidth: 1,
     },
     buttonVoltarText: {
-        color: "#FFF",
-        fontSize: 20
+        color: "#000",
+        fontSize: 20,
+        fontWeight: "bold"
     },
-    titulo: {   
+    titulo: {
         fontSize: 25,
         fontWeight: "bold",
         padding: "5%"
-    }, add: {
-        backgroundColor: "#392de9",
-        marginTop: 10,
-        width: "95%",
-        alignSelf: 'center',
-        borderRadius: 8
     },
-    icon:{
-        width:'100%',
-        alignItems:'center',
+    footer: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: 'space-around'
     }
 })

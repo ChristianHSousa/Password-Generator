@@ -65,10 +65,39 @@ export function useCategoryDatabase() {
         }
     }
 
+    async function updateByName(data:any,name:any){
+        const statement = await database.prepareAsync( "UPDATE category SET name = $name WHERE name = $data");
+        try {
+            const result = await statement.executeAsync({
+                $name: name,
+                $data: data
+            })
+        } catch (error) {
+            throw error
+        } finally{
+            await statement.finalizeAsync()
+        }
+    }
+
+    async function deleteByName(data:any){
+        const statement = await database.prepareAsync("DELETE FROM category WHERE name = $name");
+        try {
+            const result = await statement.executeAsync({
+                $name: data
+            })
+            return result;
+        } catch (error) {
+            throw error
+        } finally {
+            await statement.finalizeAsync()
+        }
+    }
     return {
         create,
         searchByName,
         deleteAll,
-        getAllName
+        getAllName,
+        updateByName,
+        deleteByName
     }
 }

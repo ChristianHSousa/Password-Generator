@@ -1,16 +1,27 @@
 import { View, StyleSheet, Text, TouchableOpacity, Pressable, KeyboardAvoidingView, TextInput } from "react-native";
 import * as Clipboard from 'expo-clipboard'
-import useStorage from "@/hooks/useStorage";
+import { Dropdown } from 'react-native-element-dropdown';
+import { useCategoryDatabase, CategoryDatabaseType } from '@/database/useCategoryDatabase';
+import { useIsFocused } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+
 export function ModalPassword({ password, handleClose }: any) {
-    const { getItem, saveItem, removeItem } = useStorage();
-
-
+    const CategoryDatabase = useCategoryDatabase();
+    const focused = useIsFocused;
+    const [listCategories, setListCategories] = useState<CategoryDatabaseType[]>([]);
     async function handleCopyPassword() {
         await Clipboard.setStringAsync(password)
-        await saveItem("@pass", password)
-        handleClose()
-
     }
+
+    useEffect(() => {
+        async function loadCategories() {
+            setListCategories([]);
+            const categories = await CategoryDatabase.getAllName();
+
+            setListCategories(categories);
+        }
+        loadCategories();
+    }, [focused])
 
     return (
 
@@ -21,7 +32,6 @@ export function ModalPassword({ password, handleClose }: any) {
                 <Pressable style={styles.innerPassword} onLongPress={handleCopyPassword}>
                     <Text style={styles.text}>{password}</Text>
                 </Pressable>
-
                 <View style={styles.buttonArea}>
 
                     <TouchableOpacity style={styles.button} onPress={handleClose}>
