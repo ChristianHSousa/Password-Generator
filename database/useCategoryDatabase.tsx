@@ -52,6 +52,35 @@ export function useCategoryDatabase() {
         }
     }
 
+    async function getIdByName(name:any){
+        const statement = database.prepareAsync("SELECT id FROM category WHERE name = $name")
+        try {
+            
+            const response = (await statement).executeAsync({
+                $name : name
+            })
+            return response;
+        } catch (error) {
+            throw error
+        } finally{
+            (await statement).finalizeAsync
+        }
+    }
+    async function getNameById(id:any){
+        const statement = database.prepareAsync("SELECT name FROM category WHERE id = $id")
+        try {
+            
+            const response = (await statement).executeAsync({
+                $id : id
+            })
+            return response;
+        } catch (error) {
+            throw error
+        } finally{
+            (await statement).finalizeAsync
+        }
+    }
+
 
     async function deleteAll(){
         const statement = database.prepareAsync("DELETE FROM category;")
@@ -98,6 +127,7 @@ export function useCategoryDatabase() {
         deleteAll,
         getAllName,
         updateByName,
-        deleteByName
+        deleteByName,
+        getIdByName
     }
 }

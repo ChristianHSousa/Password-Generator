@@ -2,6 +2,7 @@ import { View, StyleSheet, Text, TouchableOpacity, Pressable, KeyboardAvoidingVi
 import * as Clipboard from 'expo-clipboard'
 import { Dropdown } from 'react-native-element-dropdown';
 import { useCategoryDatabase, CategoryDatabaseType } from '@/database/useCategoryDatabase';
+import { Picker } from "@react-native-picker/picker";
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 
@@ -9,16 +10,22 @@ export function ModalPassword({ password, handleClose }: any) {
     const CategoryDatabase = useCategoryDatabase();
     const focused = useIsFocused;
     const [listCategories, setListCategories] = useState<CategoryDatabaseType[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState('')
     async function handleCopyPassword() {
         await Clipboard.setStringAsync(password)
     }
 
+    const renderCategories = () => {
+        return listCategories.map((categoria) => {
+            return <Picker.Item label={categoria.name} value={categoria.name} />
+        })
+    }
     useEffect(() => {
         async function loadCategories() {
             setListCategories([]);
             const categories = await CategoryDatabase.getAllName();
-
             setListCategories(categories);
+
         }
         loadCategories();
     }, [focused])
@@ -32,8 +39,15 @@ export function ModalPassword({ password, handleClose }: any) {
                 <Pressable style={styles.innerPassword} onLongPress={handleCopyPassword}>
                     <Text style={styles.text}>{password}</Text>
                 </Pressable>
+                <Picker
+                style={{height: 40, width: 200}}
+                selectedValue={selectedCategory}
+                onValueChange={(value, index) => setSelectedCategory(value)}
+                mode="dropdown"
+                >
+                    {renderCategories()}
+                </Picker>
                 <View style={styles.buttonArea}>
-
                     <TouchableOpacity style={styles.button} onPress={handleClose}>
                         <Text style={styles.buttonText}>Voltar</Text>
                     </TouchableOpacity>
