@@ -1,17 +1,30 @@
-import { View, StyleSheet, Text, TouchableOpacity, Pressable, KeyboardAvoidingView, TextInput } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Pressable } from "react-native";
 import * as Clipboard from 'expo-clipboard'
-import { Dropdown } from 'react-native-element-dropdown';
 import { useCategoryDatabase, CategoryDatabaseType } from '@/database/useCategoryDatabase';
+import { usePasswordDatabase } from "@/database/usePasswordDatabase";
 import { Picker } from "@react-native-picker/picker";
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 
 export function ModalPassword({ password, handleClose }: any) {
+    const PasswordDatabase = usePasswordDatabase();
     const CategoryDatabase = useCategoryDatabase();
     const focused = useIsFocused;
+    const [passwordAccount, setPasswordAccount] = useState(password)
+    const [account, setAccount] = useState('chrishsouza@gmail.com')
     const [listCategories, setListCategories] = useState<CategoryDatabaseType[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('')
+
     async function handleCopyPassword() {
+        const response = await CategoryDatabase.getIdByName(selectedCategory);
+        const id_category = response[0].id
+        setPasswordAccount(password)
+        const PasswordAccountType = {
+            id_category: id_category,
+            account: account,
+            password: passwordAccount
+        }
+        const create = await PasswordDatabase.create(PasswordAccountType)
         await Clipboard.setStringAsync(password)
     }
 
@@ -40,15 +53,15 @@ export function ModalPassword({ password, handleClose }: any) {
                     <Text style={styles.text}>{password}</Text>
                 </Pressable>
                 <Picker
-                style={{height: 40, width: 200}}
-                selectedValue={selectedCategory}
-                onValueChange={(value, index) => setSelectedCategory(value)}
-                mode="dropdown"
+                    style={styles.picker}
+                    selectedValue={selectedCategory}
+                    onValueChange={(value, index) => setSelectedCategory(value)}
+                    mode="dropdown"
                 >
                     {renderCategories()}
                 </Picker>
                 <View style={styles.buttonArea}>
-                    <TouchableOpacity style={styles.button} onPress={handleClose}>
+                    <TouchableOpacity style={[styles.button, styles.buttonVoltar]} onPress={handleClose}>
                         <Text style={styles.buttonText}>Voltar</Text>
                     </TouchableOpacity>
 
@@ -95,18 +108,18 @@ const styles = StyleSheet.create({
     },
     buttonArea: {
         flexDirection: "row",
-        width: "90%",
-        alignItems: "center",
-        marginTop: 8,
-        justifyContent: "space-between"
+        width: "100%",
+        justifyContent: "space-around"
     },
     button: {
-        flex: 1,
         alignItems: "center",
+        width: "40%",
         marginTop: 14,
         marginBottom: 14,
         padding: 8,
-        borderRadius: 8
+        borderRadius: 8,
+        justifyContent: "center",
+        textAlign: "center",
     },
     buttonSave: {
         backgroundColor: "#392DE9",
@@ -116,5 +129,15 @@ const styles = StyleSheet.create({
     },
     buttonSaveText: {
         color: "#FFF"
-    }
+    },
+    buttonVoltar: {
+        backgroundColor: "rgba(219, 208, 210, 0.1)",
+        borderWidth: 1,
+    },
+    picker: {
+        height: 40,
+        width: "90%",
+        backgroundColor: "rgba(219, 208, 210, 0.5)",
+        marginTop: 8,
+    },
 })

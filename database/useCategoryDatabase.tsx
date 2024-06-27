@@ -53,17 +53,13 @@ export function useCategoryDatabase() {
     }
 
     async function getIdByName(name:any){
-        const statement = database.prepareAsync("SELECT id FROM category WHERE name = $name")
+        const query = "SELECT id FROM category WHERE name = " + '"'+name+'"'
         try {
             
-            const response = (await statement).executeAsync({
-                $name : name
-            })
+            const response = await database.getAllAsync<CategoryDatabaseType>(query)
             return response;
         } catch (error) {
             throw error
-        } finally{
-            (await statement).finalizeAsync
         }
     }
     async function getNameById(id:any){

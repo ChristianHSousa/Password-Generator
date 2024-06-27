@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.christianhsousa.myapp"
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +34,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5d0406fb-cf37-4454-ac05-3198af46b6c5"
+      }
+    },
+    "owner": "christianhsousa"
   }
 }

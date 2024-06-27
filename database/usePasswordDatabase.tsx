@@ -18,7 +18,9 @@ export function usePasswordDatabase() {
 
         try {
             // Verifica se ja existe
-
+            console.log(data.account)
+            console.log(data.id_category)
+            console.log(data.password)
             const response = statement.executeAsync({
                 $id_category: data.id_category,
                 $account: data.account,
@@ -48,6 +50,7 @@ export function usePasswordDatabase() {
     }
 
     return {
-        getAllPasswords
+        getAllPasswords,
+        create
     }
 }
